@@ -6,7 +6,6 @@ import Image from 'next/image';
 interface User {
   username: string;
   name: string;
-  email: string;
   avatar_url: string;
 }
 
