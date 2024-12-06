@@ -10,9 +10,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const user = JSON.parse(auth);
-    console.log('User from cookie:', user);
-
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
+
     const db = client.db();
     const dbUser = await db.collection('users').findOne({ githubId: user.githubId });
 
@@ -22,11 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ error: 'Not authenticated' });
     }
 
-    console.log('User from MongoDB:', dbUser);
-
-    res.status(200).json({ username: dbUser.username, name: dbUser.name, avatar_url: dbUser.avatar_url });
+    res.status(200).json({ username: dbUser.username, name: dbUser.name, email: dbUser.email, avatar_url: dbUser.avatar_url });
   } catch (error) {
-    console.error('Error in user handler:', error);
     res.status(401).json({ error: 'Not authenticated' });
   }
 }
