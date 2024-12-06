@@ -7,8 +7,8 @@ const Page = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #333; 
-  color: #fff; 
+  background-color: #333;
+  color: #fff;
   font-family: Arial, sans-serif;
 `;
 
@@ -18,15 +18,15 @@ const Main = styled.main`
 
 const Button = styled.a`
   padding: 10px 20px;
-  background-color: #fff; 
-  color: #333; 
+  background-color: #fff;
+  color: #333;
   text-decoration: none;
   border-radius: 5px;
   border: none;
   cursor: pointer;
 
   &:hover {
-    background-color: #ddd; /* Light grey background on hover */
+    background-color: #ddd;
   }
 `;
 
@@ -44,5 +44,3 @@ export default function Home() {
     </Page>
   );
 }
-
-// please man

@@ -22,7 +22,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     res.status(200).json({ username: dbUser.username, name: dbUser.name, email: dbUser.email, avatar_url: dbUser.avatar_url });
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(401).json({ error: 'Not authenticated' });
   }
 }

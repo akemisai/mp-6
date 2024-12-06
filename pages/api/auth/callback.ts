@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      Accept: 'application/json',
     },
     body: JSON.stringify({
       client_id: process.env.GITHUB_CLIENT_ID,
@@ -35,8 +35,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   const emails = await emailResponse.json();
-  console.log('Emails response:', emails);
-
   const primaryEmail = Array.isArray(emails) ? emails.find((email: any) => email.primary)?.email : null;
 
   const client = await MongoClient.connect(process.env.MONGODB_URI as string);
@@ -58,7 +56,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     avatar_url: user.avatar_url,
   };
 
-  res.setHeader('Set-Cookie', `auth=${JSON.stringify(userData)}; Path=/; HttpOnly; Max-Age=${60 * 60 * 24}`);
+  const isProd = process.env.NODE_ENV === 'production';
+  res.setHeader(
+    'Set-Cookie',
+    `auth=${JSON.stringify(userData)}; Path=/; HttpOnly; Max-Age=${60 * 60 * 24}; ${isProd ? 'Secure;' : ''} SameSite=Strict`
+  );
 
   res.redirect(`/profile`);
 }

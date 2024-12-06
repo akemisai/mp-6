@@ -16,7 +16,7 @@ const Page = styled.div`
   justify-content: center;
   min-height: 100vh;
   background-color: #333;
-  color: #fff; 
+  color: #fff;
   font-family: Arial, sans-serif;
 `;
 
@@ -27,13 +27,13 @@ const Main = styled.main`
 const Button = styled.button`
   padding: 10px 20px;
   background-color: #fff;
-  color: #333; 
+  color: #333;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 
   &:hover {
-    background-color: #ddd; 
+    background-color: #ddd;
   }
 `;
 
@@ -52,7 +52,7 @@ export default function Profile() {
       }
     }
     fetchUser();
-  }, []);
+  }, [router]);
 
   if (!user) return <div>Loading...</div>;
 
@@ -60,7 +60,11 @@ export default function Profile() {
     <Page>
       <Main>
         <h1>Profile</h1>
-        <img src={user.avatar_url} alt="Profile Picture" style={{ borderRadius: '50%', width: '150px', height: '150px' }} />
+        <img
+          src={user.avatar_url}
+          alt="Profile Picture"
+          style={{ borderRadius: '50%', width: '150px', height: '150px' }}
+        />
         <p>Name: {user.name}</p>
         <p>Username: {user.username}</p>
         <p>Signed in with: GitHub</p>
