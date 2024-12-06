@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import Image from 'next/image';
 
 interface User {
   username: string;
@@ -52,7 +53,7 @@ export default function Profile() {
       }
     }
     fetchUser();
-  }, []);
+  }, [router]);
 
   if (!user) return <div>Loading...</div>;
 
@@ -60,7 +61,7 @@ export default function Profile() {
     <Page>
       <Main>
         <h1>Profile</h1>
-        <img src={user.avatar_url} alt="Profile Picture" style={{ borderRadius: '50%', width: '150px', height: '150px' }} />
+        <Image src={user.avatar_url} alt="Profile Picture" width={150} height={150} style={{ borderRadius: '50%' }} />
         <p>Name: {user.name}</p>
         <p>Username: {user.username}</p>
         <p>Signed in with: GitHub</p>
