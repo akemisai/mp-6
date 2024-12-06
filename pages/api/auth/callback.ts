@@ -1,13 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { MongoClient } from 'mongodb';
 
-interface GitHubEmail {
-  email: string;
-  primary: boolean;
-  verified: boolean;
-  visibility: string;
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { code } = req.query;
@@ -28,6 +21,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const data = await response.json();
     const accessToken = data.access_token;
 
+    if (!accessToken) {
+      console.error('Failed to obtain access token:', data);
+      return res.status(500).send('Failed to obtain access token');
+    }
+
     const userResponse = await fetch('https://api.github.com/user', {
       headers: {
         Authorization: `token ${accessToken}`,
@@ -36,23 +34,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const user = await userResponse.json();
 
-    const emailResponse = await fetch('https://api.github.com/user/emails', {
-      headers: {
-        Authorization: `token ${accessToken}`,
-      },
-    });
-
-    const emails: GitHubEmail[] = await emailResponse.json();
-    console.log('Emails response:', emails);
-
-    const primaryEmail = Array.isArray(emails) ? emails.find((email) => email.primary)?.email : null;
+    if (!user || user.message === 'Bad credentials') {
+      console.error('Failed to fetch user:', user);
+      return res.status(500).send('Failed to fetch user');
+    }
 
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
 
     const result = await db.collection('users').updateOne(
       { githubId: user.id },
-      { $set: { githubId: user.id, username: user.login, name: user.name, email: primaryEmail, avatar_url: user.avatar_url } },
+      { $set: { githubId: user.id, username: user.login, name: user.name, avatar_url: user.avatar_url } },
       { upsert: true }
     );
 
@@ -64,7 +56,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       githubId: user.id,
       username: user.login,
       name: user.name,
-      email: primaryEmail,
       avatar_url: user.avatar_url,
     };
 
